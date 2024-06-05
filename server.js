@@ -18,58 +18,30 @@ connectDB();
 
 const app = express();
 
-// Configuração de CORS
-const allowedOrigins = [
-  'http://localhost:5174',
+app.use(cors({
+  origin: [
+  'http://localhost:5173',
   'http://localhost:5500',
   'https://web-com-client-frontend.vercel.app',
   'https://web-com-client-backend.vercel.app'
-
-];
-
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  ],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,AUTH',
   credentials: true,
 }));
 
 // Helmet configuração
-app.use(helmet(/* {
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://apis.google.com"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      imgSrc: ["'self'", "data:"],
-      connectSrc: ["'self'", "https://web-com-client.vercel.app", "http://localhost:5174", "http://localhost:5000"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      objectSrc: ["'none'"],
-      upgradeInsecureRequests: [],
-    },
-  },
-  dnsPrefetchControl: { allow: true },
-  frameguard: { action: 'deny' },
-  hidePoweredBy: true,
-  hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
-  ieNoOpen: true,
-  noSniff: true,
-  permittedCrossDomainPolicies: { permittedPolicies: 'none' },
-  referrerPolicy: { policy: 'no-referrer' },
-  xssFilter: true,
-} */));
+app.use(helmet());
 
 app.use(bodyParser.json());
 
-app.options('*', cors()); // Enable pre-flight requests for all routes
+// Configuração para lidar com rotas não definidas
+app.get('/*', (req, res) => {
+  console.log(`Request para: ${req.url}`);
+  res.sendFile(path.join(__dirname, 'src', 'dist', 'index.html'));
+});
 
 // Rota para criação de Purchase
-app.post('/purchase/', async (req, res) => {
+app.post('/purchase', async (req, res) => {
   try {
     const purchase = new Purchase(req.body);
     await purchase.save();
