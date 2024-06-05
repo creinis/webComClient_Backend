@@ -22,7 +22,9 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5174',
   'http://localhost:5500',
-  'https://web-com-client.vercel.app'
+  'https://web-com-client-frontend.vercel.app',
+  'https://web-com-client-backend.vercel.app'
+
 ];
 
 app.use(cors({
@@ -38,7 +40,7 @@ app.use(cors({
 }));
 
 // Helmet configuração
-app.use(helmet({
+app.use(helmet(/* {
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
@@ -60,7 +62,7 @@ app.use(helmet({
   permittedCrossDomainPolicies: { permittedPolicies: 'none' },
   referrerPolicy: { policy: 'no-referrer' },
   xssFilter: true,
-}));
+} */));
 
 app.use(bodyParser.json());
 
