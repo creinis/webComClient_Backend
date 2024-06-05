@@ -18,14 +18,24 @@ connectDB();
 
 const app = express();
 
-app.use(cors({
-  origin: [
+// Configuração de CORS
+const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5500',
   'https://web-com-client-frontend.vercel.app',
   'https://web-com-client-backend.vercel.app'
-  ],
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,AUTH',
+
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));
 
@@ -34,11 +44,7 @@ app.use(helmet());
 
 app.use(bodyParser.json());
 
-// Configuração para lidar com rotas não definidas
-app.get('/*', (req, res) => {
-  console.log(`Request para: ${req.url}`);
-  res.sendFile(path.join(__dirname, 'src', 'dist', 'index.html'));
-});
+app.options('*', cors()); // Enable pre-flight requests for all routes
 
 // Rota para criação de Purchase
 app.post('/purchase', async (req, res) => {
