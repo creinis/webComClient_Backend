@@ -24,9 +24,9 @@ const allowedOrigins = [
   'http://localhost:5500',
   'https://web-com-client-frontend.vercel.app',
   'https://web-com-client-backend.vercel.app',
-  'https://remind-api.vercel.app/users/criar',
+  'https://remind-api.vercel.app/users',
   'https://remind-api.vercel.app',
-  'https://129.148.47.221:8000/users/criar'
+  'https://129.148.47.221:8000'
 
 ];
 
